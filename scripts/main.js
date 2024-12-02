@@ -1,6 +1,6 @@
 
 const enemyContanier = document.getElementsByClassName("enemy-container")[0]
-
+let enemyDying = false
 
 function createEntity(size, health)
 {
@@ -26,54 +26,59 @@ function killEntity(entity)
     // entity.animate(deathTransform, deathTiming)
 
     child = entity.childNodes[0]
+    child.classList.toggle("death")
+    entity.classList.toggle("death")
 
-    let length = 500
     let start = Date.now();
+    enemyDying = true
     let timer = setInterval(function(){
         child.src = "images/enemy-dead.png"
         let timePassed = Date.now() - start
-        width = (100 - ((timePassed/length) * 100))
-        if (width > 0) {
-            child.style.width = width + "%"
-            entity.style.width = (width/4) + "%"
-        } else {
+        if (timePassed >= 500) {
             clearInterval(timer)
+            enemyDying = false
+            child.remove()
             entity.remove()
-            return}
-    }, 20)
+            return
+        }
+    })
 }
 
 function damageEntity(entity, damage)
 {
-    for (child of entity.childNodes)
+    console.log(enemyDying)
+    if (enemyDying === false)
     {
-
-        child.src = "images/enemy-damaged.png"
-        let length = 250
-        let start = Date.now();
-        let timer = setInterval(function(){
-            let timePassed = Date.now() - start
-            if (timePassed >= length) {
-                clearInterval(timer) // finish the animation after 2 seconds
-                child.src = "images/enemy.png"
-                return
-            }
-        })
-
-        if (child.classList.contains("entity-healthBar"))
-        {
-            damageTotal = damage * 10
-            if (child.dataset.percentage - damageTotal > 0)
+        for (child of entity.childNodes)
             {
-                addPercent(child, -damageTotal)  
-            } 
-            else 
+            if (child.classList.contains("entity-healthBar"))
             {
-                child.remove()
-                killEntity(entity)
+                damageTotal = damage * 10
+                if (child.dataset.percentage - damageTotal > 0)
+                {
+                    addPercent(child, -damageTotal)  
+                } 
+                else 
+                {
+                    child.remove()
+                    killEntity(entity)
+                }
+            } else {
+                child.src = "images/enemy-damaged.png"
+                let length = 300
+                let start = Date.now();
+                let damaged = setInterval(function(){
+                    let timePassed = Date.now() - start
+                    if (timePassed >= length) {
+                        clearInterval(damaged)
+                        child.src = "images/enemy.png"
+                        return
+                    }
+                })
             }
         }
     }
+    
 }
 
 function getEntitySprite(size)
@@ -88,6 +93,6 @@ function getEntitySprite(size)
 
 for (let i = 0; i < 20; i++)
 {
-    let newEnemy = createEntity(100,0)
+    let newEnemy = createEntity(50,0)
     enemyContanier.appendChild(newEnemy)
 }
