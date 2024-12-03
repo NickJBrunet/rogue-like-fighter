@@ -29,19 +29,25 @@ function killEntity(entity)
     child.classList.toggle("death")
     entity.classList.toggle("death")
 
-    let start = Date.now();
+    let width = child.style.width.split('px')[0]
+    let start = Date.now()
+    let length = 1000
+    let iterations = 100
     enemyDying = true
     let timer = setInterval(function(){
-        child.src = "images/enemy-dead.png"
+        child.src = "images/brainoid-dead.png"
         let timePassed = Date.now() - start
-        if (timePassed >= 500) {
+        if (timePassed >= length) {
             clearInterval(timer)
             enemyDying = false
             child.remove()
             entity.remove()
             return
+        } else {
+            // width = child.style.width.split('px')[0]
+            // child.style.width = width - ((width/iterations) * 2) + "px"
         }
-    })
+    }, (length/iterations))
 }
 
 function damageEntity(entity, damage)
@@ -64,14 +70,14 @@ function damageEntity(entity, damage)
                     killEntity(entity)
                 }
             } else {
-                child.src = "images/enemy-damaged.png"
+                child.src = "images/brainoid-damage.png"
                 let length = 300
                 let start = Date.now();
                 let damaged = setInterval(function(){
                     let timePassed = Date.now() - start
                     if (timePassed >= length) {
                         clearInterval(damaged)
-                        child.src = "images/enemy.png"
+                        child.src = "images/brainoid.png"
                         return
                     }
                 })
@@ -84,15 +90,17 @@ function damageEntity(entity, damage)
 function getEntitySprite(size)
 {
     let newEntitySprite = document.createElement('img')
-    newEntitySprite.src = "images/enemy.png"
+    newEntitySprite.src = "images/brainoid.png"
     newEntitySprite.alt = "enemy sprite"
     newEntitySprite.classList.add("entity-sprite")
+    newEntitySprite.style.width = size+"px"
+    newEntitySprite.dataset.width = size
     return newEntitySprite
     
 }
 
 for (let i = 0; i < 20; i++)
 {
-    let newEnemy = createEntity(50,0)
+    let newEnemy = createEntity(150,0)
     enemyContanier.appendChild(newEnemy)
 }
